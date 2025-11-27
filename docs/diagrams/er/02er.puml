@@ -5,8 +5,9 @@
 
 ' 図に表示する要素を定義
 participant client_A as クライアントA
-participant MagicOnion as マジックオンライン
 participant client_B as クライアントB
+participant client_C as クライアントC
+participant MagicOnion as マジックオンライン
 
 ' 処理に連番を自動付与
 autonumber
@@ -14,15 +15,24 @@ autonumber
 note over クライアントA: 入室
 クライアントA -> マジックオンライン: 接続(A)
 マジックオンライン -> クライアントA: 参加者(A)
-マジックオンライン -> クライアントA: 通知(B)
 
 note over クライアントB: 入室
 クライアントB -> マジックオンライン: 接続(B)
+マジックオンライン -> クライアントA: 通知(B)
 マジックオンライン -> クライアントB: 参加者(A,B)
+
+note over クライアントC: 入室
+クライアントC -> マジックオンライン: 接続(C)
+マジックオンライン -> クライアントA: 通知(C)
+マジックオンライン -> クライアントB: 参加者(A,B,C)
+マジックオンライン -> クライアントC: 参加者(A,B,C)
 
 note over クライアントA: 退室
 クライアントA -> マジックオンライン: 接続断(A)
 
 note over クライアントB: 退室
 クライアントB -> マジックオンライン: 接続断(B)
+
+note over クライアントC: 退室
+クライアントC -> マジックオンライン: 接続断(C)
 @enduml
