@@ -1,0 +1,28 @@
+@startuml
+' シングルクォートで図には反映されないコメントを書ける
+'12_1で8ページ
+'https://plantuml.com/sequence-diagram
+
+' 図に表示する要素を定義
+participant client_A as クライアントA
+participant MagicOnion as マジックオンライン
+participant client_B as クライアントB
+
+' 処理に連番を自動付与
+autonumber
+' noteで図の中にコメントを付与
+note over クライアントA: 入室
+クライアントA -> マジックオンライン: 接続(A)
+マジックオンライン -> クライアントA: 参加者(A)
+マジックオンライン -> クライアントA: 通知(B)
+
+note over クライアントB: 入室
+クライアントB -> マジックオンライン: 接続(B)
+マジックオンライン -> クライアントB: 参加者(A,B)
+
+note over クライアントA: 退室
+クライアントA -> マジックオンライン: 接続断(A)
+
+note over クライアントB: 退室
+クライアントB -> マジックオンライン: 接続断(B)
+@enduml
