@@ -15,10 +15,9 @@ public class GameDirector : MonoBehaviour
     UserModel userModel;
 
     int myUserId = 1;//自分のユーザーID
-    User myself; //自分のユーザー情報を保持
 
-    public InputField InputRoomName;//InputFieldで入力された文字列を取得
-    public InputField InputUserId;//InputFieldで入力された文字列を取得
+    [SerializeField] InputField InputRoomName;//InputFieldで入力された文字列を取得
+    [SerializeField] InputField InputUserId;//InputFieldで入力された文字列を取得
 
     async void Start()
     {
@@ -30,16 +29,6 @@ public class GameDirector : MonoBehaviour
         //接続
         await roomModel.ConnectAsync();
 
-        try
-        {
-            //ユーザー情報を取得
-            myself = await userModel.GetUser(myUserId);//===！※(GameDirectorより)===
-        }
-        catch (Exception e)
-        {
-            Debug.Log("RegistUser failed");
-            Debug.LogException(e);
-        }
     }
     public async void JoinRoom()
     {
@@ -49,6 +38,8 @@ public class GameDirector : MonoBehaviour
         {
             return;
         }
+
+        myUserId = userId;
 
         if (roomName == "sampleRoom")//InputRoomName内のテキストが未入力またはsampleRoomのとき
         {

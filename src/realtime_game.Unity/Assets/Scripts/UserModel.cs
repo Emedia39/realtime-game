@@ -3,15 +3,14 @@ using Grpc.Core;
 using MagicOnion.Client;
 using MagicOnion;
 using realtime_game.Shared.Interfaces.Services;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using realtime_game.Shared.Models.Entities;
 using System;
+using UnityEngine;
 
 public class UserModel : BaseModel
 {
     private int userId;  //ìoò^ÉÜÅ[ÉUÅ[ID
-    private string ServerURL;
 
     public async UniTask<bool> RegistUserAsync(string name)
     {
@@ -24,7 +23,7 @@ public class UserModel : BaseModel
         }
         catch (RpcException e)
         {  //ìoò^é∏îs
-            //Debug.Log(e);
+            Debug.Log(e);
             return false;
             
         }

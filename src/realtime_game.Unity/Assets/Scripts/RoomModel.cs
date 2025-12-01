@@ -36,7 +36,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     //@”jŠüˆ— 
     async void OnDestroy()
     {
-        DisconnectAsync();
+        await DisconnectAsync();
     }
 
     //@“üº

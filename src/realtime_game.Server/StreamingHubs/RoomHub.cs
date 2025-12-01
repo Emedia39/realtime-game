@@ -67,7 +67,7 @@ namespace Server.StreamingHubs
         }
 
         // 退出処理？
-        public Task LeaveAsync()
+        /*public Task LeaveAsync()
             {
                 //　退室したことを全メンバーに通知
                 this.roomContext.Group.All.OnLeave(this.ConnectionId);//！OnLeave？
@@ -82,7 +82,7 @@ namespace Server.StreamingHubs
                     roomContextRepos.RemoveContext("sampleRoom");//ルーム名
                 }
                 return Task.CompletedTask;
-            }
+            }*/
 
         }
     }

@@ -1320,7 +1320,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2002746647}
+      - m_Target: {fileID: 2002746649}
         m_TargetAssemblyTypeName: GameDirector, Assembly-CSharp
         m_MethodName: JoinRoom
         m_Mode: 1
@@ -1616,11 +1616,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2002746646}
-  - component: {fileID: 2002746645}
-  - component: {fileID: 2002746644}
-  - component: {fileID: 2002746647}
   - component: {fileID: 2002746649}
   - component: {fileID: 2002746648}
+  - component: {fileID: 2002746647}
   m_Layer: 0
   m_Name: GameDirector
   m_TagString: Untagged
@@ -1628,30 +1626,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2002746644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2002746643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8057b0321998dce4a872275b939599fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2002746645
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2002746643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ad79a9be29cd99419327f6209da2931, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &2002746646
 Transform:
   m_ObjectHideFlags: 0
@@ -1676,12 +1650,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2002746643}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b825ed4a1d6c20349af84ca46c17fd8c, type: 3}
+  m_Script: {fileID: 11500000, guid: 15bcf118069967e4d82c67984c2a59df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterPrefab: {fileID: 3852372633172760599, guid: bc87c60279c4dfa42a30c6acacadda39, type: 3}
-  InputRoomName: {fileID: 719380695}
-  InputUserId: {fileID: 537626167}
 --- !u!114 &2002746648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1691,7 +1662,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2002746643}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 138da8f7e447c31409fc0f13652120e7, type: 3}
+  m_Script: {fileID: 11500000, guid: c9d755434ce6a4144b6104f38672a36a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2002746649
@@ -1703,9 +1674,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2002746643}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8200a3eb18449f14b90bb46f43524780, type: 3}
+  m_Script: {fileID: 11500000, guid: d38b63470b96d8a4a8ae812639e75127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  characterPrefab: {fileID: 3852372633172760599, guid: 4bd7bfee65582c64bb310ee2f9b4ac93, type: 3}
+  InputRoomName: {fileID: 719380695}
+  InputUserId: {fileID: 537626167}
 --- !u!1 &2124305941
 GameObject:
   m_ObjectHideFlags: 0
