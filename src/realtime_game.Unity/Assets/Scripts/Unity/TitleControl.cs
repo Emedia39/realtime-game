@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-public class GameControl : MonoBehaviour
+public class TitleControl : MonoBehaviour
 {
     //SE
     //[SerializeField] AudioClip gameStartSE;//クリアSE
@@ -20,12 +20,13 @@ public class GameControl : MonoBehaviour
 
     }
 
-    public void LoadResultScene()//ボタンでシーン移行
+    public void LoadRoginScene()//ボタンでシーン移行
     {
         //audioSource.PlayOneShot(gameStartSE);
 
         //シーン遷移
         //SceneManager.LoadScene("GameScene");//シーン切り替え
-        Initiate.Fade("ResultScene", Color.black, 1.0f);//移動先のシーン#色指定#フェードにかかる時間
+        Initiate.Fade("RoginScene", Color.black, 1.0f);//移動先のシーン#色指定#フェードにかかる時間
     }
+
 }
