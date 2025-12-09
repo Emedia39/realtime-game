@@ -1,3 +1,5 @@
+using UnityEngine; // Mathf.Pow関数を使用するのに必要
+
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Entities;
 using System;
@@ -29,7 +31,25 @@ public class GameDirector : MonoBehaviour
         //接続
         await roomModel.ConnectAsync();
 
+        // 弱者が勝利した場合の増減レート
+        //Debug.Log($"弱者の勝利{CalcRating(1200, 1600)}");
+        // 強者が勝利した場合の増減レート
+        //Debug.Log($"強者の勝利{CalcRating(1600, 1200)}");
+
     }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {//ESCキーを押した場合
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;//ゲームを強制終了
+#else//ビルドの場合
+        Application.Quit();
+#endif
+        }
+    }
+
     public async void JoinRoom()
     {
         string roomName = InputRoomName.text;
@@ -80,6 +100,13 @@ public class GameDirector : MonoBehaviour
         characterObject.transform.position = new Vector3(0, 0, 0); // 配置位置設定
         characterList[user.ConnectionId] = characterObject;  //フィールドで保持
     }
+
+    // 勝者と敗者のレートから、増減レートを計算
+    /*private float CalcRating(int winnerRate, int loserRate)
+    {
+        const int K = 32; // レート計算用の定数。これが大きくなれば増減レートも大きくなる
+        return K / Mathf.Pow(10, ((winnerRate - loserRate) / 400f) + 1);
+    }*/
 
 }
 
