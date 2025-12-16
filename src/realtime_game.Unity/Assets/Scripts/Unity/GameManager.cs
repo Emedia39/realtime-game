@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-public class GameControl : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     //SE
     //[SerializeField] AudioClip gameStartSE;//クリアSE
@@ -11,6 +11,12 @@ public class GameControl : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        // カーソルを非表示＆ロック
+        Cursor.lockState = CursorLockMode.Locked;//カーソルを画面中央に固定
+        Cursor.visible = false;//カーソル非表示
+        //Cursor.lockState = CursorLockMode.None;//カーソルを自由に
+        //Cursor.visible = true;//カーソル表示
+
         //audioSource = GetComponent<AudioSource>();
     }
 

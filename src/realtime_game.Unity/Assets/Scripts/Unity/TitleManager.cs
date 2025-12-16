@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
-public class TitleControl : MonoBehaviour
+public class TitleManager : MonoBehaviour
 {
     //SE
     //[SerializeField] AudioClip gameStartSE;//ÉNÉäÉASE
