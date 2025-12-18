@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HPUI : MonoBehaviour
+public class HpRodController : MonoBehaviour
 {
-    public int maxHP = 100;
-    public int currentHP = 100;
+    public float maxHP;
+    public float currentHP;
 
     public Image hpBarImage; // HPバー
     public Text Hp;          // HP数値
@@ -22,6 +22,9 @@ public class HPUI : MonoBehaviour
 
     void Start()
     {
+        maxHP = 100;
+        currentHP = 100;
+
         barRT = hpBarImage.GetComponent<RectTransform>();
         maxBarWidth = barRT.rect.width;
         UpdateHPUI();
@@ -52,6 +55,23 @@ public class HPUI : MonoBehaviour
             hpBarImage.color = yellowColor;
         else
             hpBarImage.color = redColor;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        Debug.Log($"{gameObject.name} に {damage} ダメージ");
+
+        if (currentHP <= 0)
+        {
+            KnockDown();
+        }
+    }
+
+    void KnockDown()
+    {
+        Debug.Log($"{gameObject.name} は倒された");
+        gameObject.SetActive(false);
     }
 
 }

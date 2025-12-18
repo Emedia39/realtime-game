@@ -5,10 +5,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 //using static UnityEditor.PlayerSettings;
 
-public class PlayerControl : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     //スクリプト
-    [SerializeField] WeaponControl weaponControl;
+    [SerializeField] WeaponController weaponController;
 
     //[SerializeField] private float radiusPixel = 20f; // レティクル許容半径（px）
     /*// カメラ内の「特定範囲」例：中央60%だけ判定
@@ -171,7 +171,7 @@ public class PlayerControl : MonoBehaviour
 
         }
 
-        if (isWeaponHold == true)//クリックしていたら
+        /*if (isWeaponHold == true)//クリックしていたら
         {
             WeaponHold();//武器を構える
 
@@ -184,6 +184,18 @@ public class PlayerControl : MonoBehaviour
                 }
                 
             }
+        }*/
+        if (isWeaponHold)//クリックしていたら
+        {
+            WeaponHold();//武器を構える
+            
+            //bool hit = weaponControl.TryGiveDamage(gameObject);
+            bool hit = weaponController.TryGiveDamage(transform.root.gameObject);
+            if (hit)
+            {
+                //Debug.Log("プレイヤーにヒット！");
+            }
+            
         }
         else
         {
@@ -217,11 +229,6 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void Abc()//独自の関数
-    {
-
-    }
-
     public void Jump()//ジャンプ
     {
         rb.AddForce(transform.up * jumpPower, ForceMode.Impulse);
@@ -251,6 +258,11 @@ public class PlayerControl : MonoBehaviour
         weapons[1].transform.localPosition = new Vector3(0.4f, 0.0f, 0.6f);//親+位置/※左右上下前後
         weapons[2].transform.localPosition = new Vector3(0.4f, 0.0f, 0.6f);//親+位置/※左右上下前後
         weapons[WeaponsNom].transform.localRotation = Quaternion.Euler(10.0f, 10.0f, 0.0f);//角度
+    }
+
+    public void UI()//他UIの処理(除く→HPバー/照準)
+    {
+        
     }
 
 }
