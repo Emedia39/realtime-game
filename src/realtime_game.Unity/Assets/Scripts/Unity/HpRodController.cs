@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class HpRodController : MonoBehaviour
 {
     public float maxHP;
-    public float currentHP;
+    public float currentHP = 100;
 
     public Image hpBarImage; // HPÉoÅ[
     public Text Hp;          // HPêîíl
@@ -23,7 +23,7 @@ public class HpRodController : MonoBehaviour
     void Start()
     {
         maxHP = 100;
-        currentHP = 100;
+        currentHP = 100;//
 
         barRT = hpBarImage.GetComponent<RectTransform>();
         maxBarWidth = barRT.rect.width;

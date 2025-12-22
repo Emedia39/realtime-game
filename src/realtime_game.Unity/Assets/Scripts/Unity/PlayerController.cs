@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     //三種の武器(配列)
     [SerializeField] private GameObject[] weapons; //0:P320,1:EP8,2:M4
 
-    public static int WeaponsNom;//武器の識別番号
+    public static int WeaponsNom { get; private set; }//武器の識別番号
 
     bool isCountShake = false;//武器の揺れ
     int countShake = 0;//武器の揺れカウント
