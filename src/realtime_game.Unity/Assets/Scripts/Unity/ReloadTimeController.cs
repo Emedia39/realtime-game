@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CoolTimeController : MonoBehaviour
+public class ReloadTimeController : MonoBehaviour
 {
     [SerializeField] WeaponController weaponController;
     [SerializeField] Image[] cooltimeImage;

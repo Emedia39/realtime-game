@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour
         if (isCountShake == true)
         {
             WeaponShake();
-            Debug.Log("武器の揺れ可能");
+            //Debug.Log("武器の揺れ可能");
         }
         //-------------------------------------------------------------------------
         /*

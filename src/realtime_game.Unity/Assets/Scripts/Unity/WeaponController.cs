@@ -1,5 +1,6 @@
 using NUnit.Framework.Internal;
 using UnityEngine;
+using System.Collections;//IEnumerator WeaponReload()//リロード時の処理で使う
 
 public class WeaponController : MonoBehaviour
 {
@@ -18,6 +19,10 @@ public class WeaponController : MonoBehaviour
     float nextFireTime = 0f;//次に射撃可能なゲーム時間
     public float restFireTime { get; private set; } = 0f;//射撃可能までの残り時間
 
+    //float nextReloadTime = 0f;
+    bool nowReload = false;//リロード中かどうか
+    float nowBullets = 0f;//残弾数/装弾数
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,7 +34,7 @@ public class WeaponController : MonoBehaviour
                 weapons_states[1] = 2;//最小ダメージ
                 weapons_states[2] = 3f;//威力減衰
                 weapons_states[3] = 0.75f;//射撃間隔(0.75秒想定)
-                weapons_states[4] = 10;//装弾数
+                weapons_states[4] = 10;//装弾数/bullets
                 weapons_states[5] = 2;//再装填時間
                 weapons_states[6] = 1f;//反動
             }
@@ -42,7 +47,7 @@ public class WeaponController : MonoBehaviour
                 weapons_states[1] = 2;//最小ダメージ
                 weapons_states[2] = 4f;//威力減衰
                 weapons_states[3] = 0.1f;//射撃間隔(0.1秒想定)
-                weapons_states[4] = 25;//装弾数
+                weapons_states[4] = 25;//装弾数/bullets
                 weapons_states[5] = 6;//再装填時間
                 weapons_states[6] = 1f;//反動
             }
@@ -55,18 +60,26 @@ public class WeaponController : MonoBehaviour
                 weapons_states[1] = 10;//最小ダメージ
                 weapons_states[2] = 9f;//威力減衰
                 weapons_states[3] = 1.5f;//射撃間隔(1.5秒)
-                weapons_states[4] = 6;//装弾数
+                weapons_states[4] = 6;//装弾数/bullets
                 weapons_states[5] = 4;//再装填時間
                 weapons_states[6] = 3f;//反動
             }
         }
+
+        nowBullets = weapons_states[4];
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        restFireTime = nextFireTime - Time.time;
+        restFireTime = nextFireTime - Time.time;//射撃可能までの残り時間更新
+
+        if (nowBullets <= 0 && nowReload == false)//残弾数が0以下かつリロード中でない時
+        {
+            StartCoroutine(WeaponReload());//リロード時間(1f = 1秒)待つ
+        }
+
         //Debug.Log(restFireTime);
 
         //Debug.Log(CurrentDistance);//※相手プレイヤータグとの距離が正確化か測るため
@@ -76,6 +89,11 @@ public class WeaponController : MonoBehaviour
 
     public bool TryGiveDamage(GameObject owner)//ダメージを与えるかどうかの処理
     {
+        if(nowBullets <= 0　|| nowReload == true)//残弾数が0以下またはリロード中の時は
+        {
+            return false;//撃てない
+        }
+
         //射撃間隔チェック
         if (Time.time < nextFireTime)//撃った時間 + 射撃間隔を超えていれば
             return false;
@@ -102,7 +120,9 @@ public class WeaponController : MonoBehaviour
 
             //次に撃てる時間を更新
             nextFireTime = Time.time + weapons_states[3];//撃った時間 + 射撃間隔
-            
+
+            nowBullets--;
+
             return true;
         }
 
@@ -135,6 +155,20 @@ public class WeaponController : MonoBehaviour
     public bool IsPlayerGiveDamage()
     {
         return true;
+    }
+
+    IEnumerator WeaponReload()//再装填時の処理
+    {
+        nowReload = true;
+        Debug.Log("リロード 開始");
+
+        yield return new WaitForSeconds(weapons_states[5]);//リロード時間(1f=1秒)待つ
+        nowBullets = weapons_states[4];//残弾数をMAXに
+
+        nowReload = false;
+        Debug.Log("リロード 完了");
+
+        //※StartCoroutine(WeaponReload());//リロード時間(1f = 1秒)待つ
     }
 
 }
