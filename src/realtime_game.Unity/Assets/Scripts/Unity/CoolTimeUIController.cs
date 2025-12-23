@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CoolTimeController : MonoBehaviour
+public class CoolTimeUIController : MonoBehaviour
 {
     [SerializeField] WeaponController weaponController;
     [SerializeField] Image[] cooltimeImage;
@@ -9,7 +9,6 @@ public class CoolTimeController : MonoBehaviour
     public float maxCoolTime;
     public float currenCoolTime = 100;
 
-    public GameObject gameObject;
     public Image coolTimeBarImage; //クールタイムバー
     //public Text Hp;          // HP数値
     
@@ -26,7 +25,9 @@ public class CoolTimeController : MonoBehaviour
 
     void Start()
     {
-        maxCoolTime =0;//0
+        //gameObject.SetActive(true);
+
+        maxCoolTime = 0;//0
         currenCoolTime = 0;//0
 
         foreach (Image cool in cooltimeImage)
@@ -46,8 +47,6 @@ public class CoolTimeController : MonoBehaviour
             {
                 cool.enabled = true;
             }
-
-            gameObject.SetActive(true);
 
             maxCoolTime = weaponController.weapons_states[3];//仮
 
@@ -70,7 +69,6 @@ public class CoolTimeController : MonoBehaviour
             }
         }
 
-        //Debug.Log(barRT);
     }
 
 }

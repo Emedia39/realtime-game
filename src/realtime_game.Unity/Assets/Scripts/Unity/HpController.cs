@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HpRodController : MonoBehaviour
+public class HpController : MonoBehaviour
 {
     public float maxHP;
     public float currentHP = 100;
@@ -39,7 +39,7 @@ public class HpRodController : MonoBehaviour
     void UpdateHPUI()
     {
         // テキスト
-        Hp.text = currentHP.ToString();
+        Hp.text = "HP : " + currentHP.ToString();
 
         // バー幅
         float rate = (float)currentHP / maxHP;

@@ -14,14 +14,15 @@ public class WeaponController : MonoBehaviour
     public float DamageForce { get; private set; }//威力減衰を含めたダメージを外から参照できるようにする
     float DamageTemporary;//仮ダメージ※最小ダメージなどの調整前
 
-    public float[] weapons_states { get; private set; }
+    public float[] weapons_states { get; private set; }//武器ごとのステータスを配列化
 
     float nextFireTime = 0f;//次に射撃可能なゲーム時間
     public float restFireTime { get; private set; } = 0f;//射撃可能までの残り時間
 
-    //float nextReloadTime = 0f;
+    float nextReloadTime = 0f;//リロード完了なゲーム時間
+    public float restReloadTime { get; private set; } = 0f;//リロード完了までの残り時間
     bool nowReload = false;//リロード中かどうか
-    float nowBullets = 0f;//残弾数/装弾数
+    public float nowBullets { get; private set; } = 0f;//残弾数/装弾数
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,7 +33,7 @@ public class WeaponController : MonoBehaviour
             {
                 weapons_states[0] = 16;//最大ダメージ
                 weapons_states[1] = 2;//最小ダメージ
-                weapons_states[2] = 3f;//威力減衰
+                weapons_states[2] = 2f;//威力減衰
                 weapons_states[3] = 0.75f;//射撃間隔(0.75秒想定)
                 weapons_states[4] = 10;//装弾数/bullets
                 weapons_states[5] = 2;//再装填時間
@@ -43,11 +44,11 @@ public class WeaponController : MonoBehaviour
         {
             weapons_states = new float[7];
             {
-                weapons_states[0] = 5;//最大ダメージ
+                weapons_states[0] = 6;//最大ダメージ
                 weapons_states[1] = 2;//最小ダメージ
                 weapons_states[2] = 4f;//威力減衰
                 weapons_states[3] = 0.1f;//射撃間隔(0.1秒想定)
-                weapons_states[4] = 25;//装弾数/bullets
+                weapons_states[4] = 30;//装弾数/bullets
                 weapons_states[5] = 6;//再装填時間
                 weapons_states[6] = 1f;//反動
             }
@@ -58,7 +59,7 @@ public class WeaponController : MonoBehaviour
             {
                 weapons_states[0] = 75;//最大ダメージ
                 weapons_states[1] = 10;//最小ダメージ
-                weapons_states[2] = 9f;//威力減衰
+                weapons_states[2] = 8f;//威力減衰
                 weapons_states[3] = 1.5f;//射撃間隔(1.5秒)
                 weapons_states[4] = 6;//装弾数/bullets
                 weapons_states[5] = 4;//再装填時間
@@ -75,14 +76,25 @@ public class WeaponController : MonoBehaviour
     {
         restFireTime = nextFireTime - Time.time;//射撃可能までの残り時間更新
 
+        restReloadTime = nextReloadTime - Time.time;//リロード完了までの残り時間更新
+
+        //Rを押した時
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            if(nowReload == false && nowBullets != weapons_states[4])//リロード中ではない＆残弾数MAXではない時
+            {
+                //強制的にリロード
+                StartCoroutine(WeaponReload());//リロード時間(1f = 1秒)待つ
+                //Debug.Log("アローリ！");
+            }
+        }
         if (nowBullets <= 0 && nowReload == false)//残弾数が0以下かつリロード中でない時
         {
             StartCoroutine(WeaponReload());//リロード時間(1f = 1秒)待つ
         }
 
-        //Debug.Log(restFireTime);
-
         //Debug.Log(CurrentDistance);//※相手プレイヤータグとの距離が正確化か測るため
+        //Debug.Log(restFireTime);
         //Debug.Log(nextFireTime);//※次に射撃できる時間
         //Debug.Log(Time.time);
     }
@@ -111,7 +123,7 @@ public class WeaponController : MonoBehaviour
             if (root.gameObject == owner)
                 return false;
 
-            HpRodController dmg = root.GetComponentInChildren<HpRodController>();
+            HpController dmg = root.GetComponentInChildren<HpController>();
             if (dmg == null)
                 return false;
 
@@ -146,8 +158,6 @@ public class WeaponController : MonoBehaviour
             damage = weapons_states[1];//最小ダメージにする※念のため
         }
 
-        //
-
         DamageForce = damage;//威力減衰を含めたダメージを外から参照できるようにする
         return damage;
     }
@@ -160,13 +170,15 @@ public class WeaponController : MonoBehaviour
     IEnumerator WeaponReload()//再装填時の処理
     {
         nowReload = true;
-        Debug.Log("リロード 開始");
+        //Debug.Log("リロード 開始");
+
+        nextReloadTime = Time.time + weapons_states[5];//現在のゲーム時間+リロード時間(※別のスクリプトの処理で使うもの)
 
         yield return new WaitForSeconds(weapons_states[5]);//リロード時間(1f=1秒)待つ
-        nowBullets = weapons_states[4];//残弾数をMAXに
+        nowBullets = weapons_states[4];//残弾数をMAXに上書き
 
         nowReload = false;
-        Debug.Log("リロード 完了");
+        //Debug.Log("リロード 完了");
 
         //※StartCoroutine(WeaponReload());//リロード時間(1f = 1秒)待つ
     }

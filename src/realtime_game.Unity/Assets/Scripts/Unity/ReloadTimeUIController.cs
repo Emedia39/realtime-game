@@ -1,16 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ReloadTimeController : MonoBehaviour
+public class ReloadTimeUIController : MonoBehaviour
 {
     [SerializeField] WeaponController weaponController;
-    [SerializeField] Image[] cooltimeImage;
+    [SerializeField] Image[] reloadtimeImage;
 
-    public float maxCoolTime;
-    public float currenCoolTime = 100;
+    public float maxReloadTime;
+    public float currenReloadTime = 100;
 
-    public GameObject gameObject;
-    public Image coolTimeBarImage; //クールタイムバー
+    public Image ReloadTimeBarImage; //クールタイムバー
     //public Text Hp;          // HP数値
     
     //public Color blueColor = Color.cyan;//new Color(37f, 182f, 252f, 255f);
@@ -26,51 +25,50 @@ public class ReloadTimeController : MonoBehaviour
 
     void Start()
     {
-        maxCoolTime =0;//0
-        currenCoolTime = 0;//0
+        //gameObject.SetActive(true);
 
-        foreach (Image cool in cooltimeImage)
+        maxReloadTime = 0;//0
+        currenReloadTime = 0;//0
+
+        foreach (Image Reload in reloadtimeImage)
         {
-            cool.enabled = false;
+            Reload.enabled = false;
         }
 
-        barRT = coolTimeBarImage.GetComponent<RectTransform>();
+        barRT = ReloadTimeBarImage.GetComponent<RectTransform>();
         maxBarWidth = barRT.rect.width;
     }
 
     private void Update()
     {
-        if (weaponController.restFireTime >= 0)//射撃可能秒数まで0.0+以上
+        if (weaponController.restReloadTime >= 0)//リロード完了秒数まで0.0+以上
         {
-            foreach (Image cool in cooltimeImage)
+            foreach (Image cool in reloadtimeImage)
             {
                 cool.enabled = true;
             }
 
-            gameObject.SetActive(true);
+            maxReloadTime = weaponController.weapons_states[5];//仮
 
-            maxCoolTime = weaponController.weapons_states[3];//仮
-
-            currenCoolTime = weaponController.restFireTime;
-            //Debug.Log(currenCoolTime);
+            currenReloadTime = weaponController.restReloadTime;
+            //Debug.Log(currenReloadTime);
 
             // バー幅
-            float rate = (float)currenCoolTime / maxCoolTime;//currenCoolTime
+            float rate = (float)currenReloadTime / maxReloadTime;//currenReloadTime
             barRT.SetSizeWithCurrentAnchors(
                 RectTransform.Axis.Horizontal,
                 maxBarWidth * rate
-            );
+            );//ここら辺が問題？
 
         }
-        else//射撃可能秒数まで0以下
+        else//リロード完了秒数まで0以下
         {
-            foreach (Image cool in cooltimeImage)
+            foreach (Image Reload in reloadtimeImage)
             {
-                cool.enabled = false;
+                Reload.enabled = false;
             }
         }
 
-        //Debug.Log(barRT);
     }
 
 }

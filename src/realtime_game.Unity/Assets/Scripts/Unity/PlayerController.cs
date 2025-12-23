@@ -73,7 +73,6 @@ public class PlayerController : MonoBehaviour
         if (index >= 0 && index < weapons.Length)
             weapons[index].SetActive(true);
 
-        //武器が○○だったらリーチやダメージ変化とかやりたい
     }
 
     // Update is called once per frame
