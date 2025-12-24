@@ -17,7 +17,7 @@ public class BulletUIController : MonoBehaviour
     void Update()
     {
         bulletText.text =
-        "rest : " +
+        "Bullet : " +
         weaponController.nowBullets + " / " +
         weaponController.weapons_states[4];
     }

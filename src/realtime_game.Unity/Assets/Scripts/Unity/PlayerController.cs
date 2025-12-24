@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    //スクリプト
+    [SerializeField] GameManager gameManager;
     [SerializeField] WeaponController weaponController;
 
     //[SerializeField] private float radiusPixel = 20f; // レティクル許容半径（px）
@@ -78,43 +78,52 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()//Rigidbodyを使った移動の処理はFixedUpdateを使う
     {
-        Vector3 dir = Vector3.zero;
-
-        if (Input.GetKey(KeyCode.W)) dir += transform.forward;
-        if (Input.GetKey(KeyCode.S)) dir -= transform.forward;
-        if (Input.GetKey(KeyCode.D)) dir += transform.right;
-        if (Input.GetKey(KeyCode.A)) dir -= transform.right;
-
-        // 入力がないとき normalized すると危険なので条件分岐する
-        Vector3 move = Vector3.zero;
-        if (dir != Vector3.zero)move = dir.normalized * moveSpeed;
-
-        // y だけは維持
-        rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);//velocity
-
-        //揺れ間隔用カウント/※動いていて武器を構えていない
-        if (dir != Vector3.zero && isWeaponHold == false)
+        if (gameManager.pausingDisplay == true)
         {
-            isCountShake = false;
-            countShake++;
-            //Debug.Log("移動");
+
         }
-        if (dir == Vector3.zero)
+        else if (gameManager.pausingDisplay == false)
         {
-            isCountShake = false;
-            countShake = 0;//リセット
-            //Debug.Log("非移動");
+            //移動(WASD)関連
+            Vector3 dir = Vector3.zero;
+
+            if (Input.GetKey(KeyCode.W)) dir += transform.forward;
+            if (Input.GetKey(KeyCode.S)) dir -= transform.forward;
+            if (Input.GetKey(KeyCode.D)) dir += transform.right;
+            if (Input.GetKey(KeyCode.A)) dir -= transform.right;
+
+            // 入力がないとき normalized すると危険なので条件分岐する
+            Vector3 move = Vector3.zero;
+            if (dir != Vector3.zero) move = dir.normalized * moveSpeed;
+
+            // y だけは維持
+            rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);//velocity
+
+            //揺れ間隔用カウント/※動いていて武器を構えていない
+            if (dir != Vector3.zero && isWeaponHold == false)
+            {
+                isCountShake = false;
+                countShake++;
+                //Debug.Log("移動");
+            }
+            if (dir == Vector3.zero)
+            {
+                isCountShake = false;
+                countShake = 0;//リセット
+                               //Debug.Log("非移動");
+            }
+            if (countShake >= 35)//少ししたら/
+            {
+                isCountShake = true;//武器の揺れ可能
+                countShake = 0;//初めにリセット
+            }
+            if (isCountShake == true)
+            {
+                WeaponShake();
+                //Debug.Log("武器の揺れ可能");
+            }
         }
-        if (countShake >= 35)//少ししたら/
-        {
-            isCountShake = true;//武器の揺れ可能
-            countShake = 0;//初めにリセット
-        }
-        if (isCountShake == true)
-        {
-            WeaponShake();
-            //Debug.Log("武器の揺れ可能");
-        }
+
         //-------------------------------------------------------------------------
         /*
         switch (direction)
@@ -139,35 +148,42 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        //マウスでカメラの視点を操作する
-        // マウスの移動入力の取得
-        float mouseX = Input.GetAxis("Mouse X") * sensitivity;  // 横のマウス移動量を取得し、感度で調整
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;  // 縦のマウス移動量を取得し、感度で調整
-        // Player（体）の回転（左右）
-        transform.Rotate(0, mouseX, 0);   // プレイヤー（体）の左右の回転をマウスX方向の入力に合わせて行
-        // Neck（首）の回転（上下）
-        rotationX -= mouseY; // マウスY方向の入力によって縦方向の回転を更新
-        rotationX = Mathf.Clamp(rotationX, minVertical, maxVertical);   // 回転角度を指定された範囲に制限
-        neck.localRotation = Quaternion.Euler(rotationX, 0, 0);
-
-        if (Input.GetKeyDown(KeyCode.Space) && !isJump)//地面でスペースキーを押すと
+        if(gameManager.pausingDisplay == true)
         {
-            Jump();//ジャンプ
-        }
 
-        // マウスの左クリック押した時の取得
-        if (Input.GetMouseButtonDown(0))//左クリックを押すと
-        {
-            isWeaponHold = true;
         }
-        // マウスの左クリック離した時の取得
+        else if (gameManager.pausingDisplay == false)
+        {
+            //マウスでカメラの視点を操作する
+            // マウスの移動入力の取得
+            float mouseX = Input.GetAxis("Mouse X") * sensitivity;  // 横のマウス移動量を取得し、感度で調整
+            float mouseY = Input.GetAxis("Mouse Y") * sensitivity;  // 縦のマウス移動量を取得し、感度で調整
+            // Player（体）の回転（左右）
+            transform.Rotate(0, mouseX, 0);   // プレイヤー（体）の左右の回転をマウスX方向の入力に合わせて行
+            // Neck（首）の回転（上下）
+            rotationX -= mouseY; // マウスY方向の入力によって縦方向の回転を更新
+            rotationX = Mathf.Clamp(rotationX, minVertical, maxVertical);   // 回転角度を指定された範囲に制限
+            neck.localRotation = Quaternion.Euler(rotationX, 0, 0);
+
+            if (Input.GetKeyDown(KeyCode.Space) && !isJump)//地面でスペースキーを押すと
+            {
+                Jump();//ジャンプ
+            }
+
+            // マウスの左クリック取得
+            if (Input.GetMouseButton(0))//左クリックを押している間
+            {
+
+            }
+            if (Input.GetMouseButtonDown(0))//左クリックを押すと
+            {
+                isWeaponHold = true;
+            }
+
+        }
         if (Input.GetMouseButtonUp(0))//左クリックを離すと
         {
             isWeaponHold = false;
-        }
-        if (Input.GetMouseButton(0))//左クリックを押している間
-        {
-
         }
 
         /*if (isWeaponHold == true)//クリックしていたら
@@ -257,11 +273,6 @@ public class PlayerController : MonoBehaviour
         weapons[1].transform.localPosition = new Vector3(0.4f, 0.0f, 0.6f);//親+位置/※左右上下前後
         weapons[2].transform.localPosition = new Vector3(0.4f, 0.0f, 0.6f);//親+位置/※左右上下前後
         weapons[WeaponsNom].transform.localRotation = Quaternion.Euler(10.0f, 10.0f, 0.0f);//角度
-    }
-
-    public void UI()//他UIの処理(除く→HPバー/照準)
-    {
-        
     }
 
 }
