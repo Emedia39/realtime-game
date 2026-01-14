@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MagicOnion;
+using System.Numerics;//Vector3で使う※Server/SharedでUnityEngineはNG
+
 namespace realtime_game.Shared.Interfaces.StreamingHubs
 {
     /// <summary>
@@ -21,8 +23,8 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         // ユーザー退室
         Task LeaveAsync();
 
-        // ユーザー退室
-        Task LeaveAsync();
+        //ユーザーの位置同期(移動)
+        //Task MoveAsync(Vector3 pos);
 
         // 接続ID取得
         public Task<Guid> GetConnectionId();

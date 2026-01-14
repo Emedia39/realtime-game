@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using MagicOnion;
+using System.Numerics;//Vector3で使う※Server/SharedでUnityEngineはNG
 
 namespace realtime_game.Shared.Interfaces.StreamingHubs
 {
@@ -16,12 +17,12 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         // ユーザーの入室通知
         void OnJoin(JoinedUser user);
 
-        // ！ユーザーの入室通知
+        // ！ユーザーの退出通知
         void OnLeave(Guid connectionId);
+        //これ取ればIRoomHubReceiverが正常になるけど…
 
-        // ユーザーの退室通知
-        void OnLeave(Guid connectionId);
-
+        //ユーザーの位置同期(移動)
+        void OnMove(Guid connectionId, Vector3 pos);
 
     }
 }

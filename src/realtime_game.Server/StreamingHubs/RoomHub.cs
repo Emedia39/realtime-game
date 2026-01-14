@@ -4,6 +4,8 @@ using realtime_game.Shared.Models.Entities;
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using realtime_game.Server.StreamingHubs;
 
+using System.Numerics;//Vector3で使う※Server/SharedでUnityEngineはNG
+
 namespace Server.StreamingHubs
 {
     public class RoomHub(RoomContextRepository roomContextRepository) : StreamingHubBase<IRoomHub, IRoomHubReceiver>, IRoomHub
@@ -82,9 +84,22 @@ namespace Server.StreamingHubs
                     roomContextRepos.RemoveContext("sampleRoom");//[ルーム(名)]を削除
                 }
                 return Task.CompletedTask;
-            }
-
         }
+
+        // 移動
+        public Task MoveAsync(Vector3 pos)
+        {
+            // 位置情報を記録
+            this.roomContext.RoomUserDataList[this.ConnectionId].pos = pos;
+
+            // 移動情報を自分以外の全メンバーに通知
+            this.roomContext.Group.Except([this.ConnectionId]).OnMove(this.ConnectionId, pos);
+
+            return Task.CompletedTask;
+        }
+
     }
+
+}
 
 

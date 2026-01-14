@@ -20,6 +20,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     // ユーザー切断通知
     public Action OnLeftUserAll { get; set; }
 
+    // 他ユーザー移動通知
+    public Action<Guid, Vector3> OnMoveUser { get; set; }// ★
+
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
@@ -86,6 +89,19 @@ public class RoomModel : BaseModel, IRoomHubReceiver
             OnLeftUserAll();
         }
 
+    }
+
+    // ★他ユーザー移動情報
+    public void OnMove(Guid connectionId, System.Numerics.Vector3 pos)
+    {
+        // 自分自身は無視
+        if (connectionId == this.ConnectionId)
+            return;
+
+        // Numerics → Unity へ変換
+        Vector3 unityPos = new Vector3(pos.X, pos.Y, pos.Z);
+
+        OnMoveUser?.Invoke(connectionId, unityPos);
     }
 
 }

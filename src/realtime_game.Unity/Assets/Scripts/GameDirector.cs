@@ -139,6 +139,20 @@ public class GameDirector : MonoBehaviour
         }
     }
 
+    // 自分以外のユーザーの移動を反映
+    private void OnMoveUser(Guid connectionId, Vector3 pos, Quaternion quaternion)
+    {
+        // いない人は移動できない
+        if (!characterList.ContainsKey(connectionId))
+        {
+            return;
+        }
+
+        // DOTweenを使うことでなめらかに動く！
+        //characterList[connectionId].transform.DOMove(pos, 0.1f);
+        characterList[connectionId].transform.position = pos;
+    }
+
 
 
     // 勝者と敗者のレートから、増減レートを計算

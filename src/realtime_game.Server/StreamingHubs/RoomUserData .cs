@@ -1,11 +1,14 @@
 ﻿using realtime_game.Shared.Interfaces.StreamingHubs;
 
+using System.Numerics;//Vector3で使う※Server/SharedでUnityEngineはNG
+
 namespace realtime_game.Server.StreamingHubs
 {
     // ルーム内のユーザー単体の情報
     public class RoomUserData
     {
         public JoinedUser JoinedUser;
+        public Vector3 pos;
     }
 
 }
