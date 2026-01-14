@@ -15,6 +15,10 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     //　ユーザー接続通知
     public Action<JoinedUser> OnJoinedUser { get; set; }
+    // ユーザー切断通知
+    public Action<Guid> OnLeftUser { get; set; }
+    // ユーザー切断通知
+    public Action OnLeftUserAll { get; set; }
 
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -61,13 +65,27 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         }
     }
 
-    //　！退出通知？
-    public void OnLeave(JoinedUser user)
+    // 退室通知 (IRoomHubReceiverインタフェースの実装)
+    public void OnLeave(Guid connectionId)
     {
-        if (OnJoinedUser != null)
+        if (OnLeftUser != null)
         {
-            OnJoinedUser(user);
+            OnLeftUser(connectionId);
         }
+    }
+
+    // 退室
+    public async UniTask LeaveAsync()
+    {
+        await roomHub.LeaveAsync();
+        Debug.Log("退室完了");
+
+        // 自分以外のオブジェクトを削除する
+        if (OnLeftUserAll != null)
+        {
+            OnLeftUserAll();
+        }
+
     }
 
 }

@@ -66,23 +66,23 @@ namespace Server.StreamingHubs
             return Task.FromResult<Guid>(this.ConnectionId);
         }
 
-        // 退出処理？
-        /*public Task LeaveAsync()
+        // 退出処理
+        public Task LeaveAsync()
             {
-                //　退室したことを全メンバーに通知
-                this.roomContext.Group.All.OnLeave(this.ConnectionId);//！OnLeave？
+            //　退室したことを全メンバーに通知
+            this.roomContext.Group.All.OnLeave(this.ConnectionId);//！OnLeave？
 
             //　ルーム内のメンバーから自分を削除
             this.roomContext.Group.Remove(this.ConnectionId);
 
                 //　ルームデータから退室したユーザーを削除
                 this.roomContext.RoomUserDataList.Remove(this.ConnectionId);
-                if (ルーム内にユーザーが一人もいないなら)//ルーム内にユーザーが一人もいないなら
+                if (this.roomContext.RoomUserDataList.Count == 0)//ルーム内にユーザーが一人もいないなら
             {
-                    roomContextRepos.RemoveContext("sampleRoom");//ルーム名
+                    roomContextRepos.RemoveContext("sampleRoom");//[ルーム(名)]を削除
                 }
                 return Task.CompletedTask;
-            }*/
+            }
 
         }
     }

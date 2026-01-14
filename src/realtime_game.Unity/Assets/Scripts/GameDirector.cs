@@ -4,9 +4,9 @@ using realtime_game.Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Entities;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
-using UnityEngine.UI;//InputFieldで入力された文字列を取得
+using UnityEngine.UI;
+using System.Linq;//InputFieldで入力された文字列を取得
 
 public class GameDirector : MonoBehaviour
 {
@@ -28,6 +28,12 @@ public class GameDirector : MonoBehaviour
 
         //ユーザーが入室した時にOnJoinedUserメソッドを実行するよう、モデルに登録しておく
         roomModel.OnJoinedUser += this.OnJoinedUser;
+
+        // ユーザーが退室した時にOnLeftUserメソッドを実行できるよう、モデルに登録しておく
+        roomModel.OnLeftUser += this.OnLeftUser;
+        // ユーザーが退室した時にOnLeftUserAllメソッドを実行できるよう、モデルに登録しておく
+        roomModel.OnLeftUserAll += this.OnLeftUserAll;
+
         //接続
         await roomModel.ConnectAsync();
 
@@ -40,14 +46,7 @@ public class GameDirector : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {//ESCキーを押した場合
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;//ゲームを強制終了
-#else//ビルドの場合
-        Application.Quit();
-#endif
-        }
+        
     }
 
     public async void JoinRoom()
@@ -63,20 +62,20 @@ public class GameDirector : MonoBehaviour
 
         if (roomName == "sampleRoom")//InputRoomName内のテキストが未入力またはsampleRoomのとき
         {
-            if (userId >= 1 && userId <= 3)//InputUserId内のテキストが1～3の時
+            if (userId >= 1 && userId <= 4)//InputUserId内のテキストが1～3の時
             {
                 //入室
                 await roomModel.JoinAsync(roomName, userId);
-                Debug.Log("C");
+                Debug.Log("C：成功");
             }
             else
             {
-                Debug.Log("B");
+                Debug.Log("B：惜しい");
             }
         }
         else
         {
-            Debug.Log("A");
+            Debug.Log("A：失敗");
         }
 
     }
@@ -100,6 +99,47 @@ public class GameDirector : MonoBehaviour
         characterObject.transform.position = new Vector3(0, 0, 0); // 配置位置設定
         characterList[user.ConnectionId] = characterObject;  //フィールドで保持
     }
+
+    public async void LeaveRoom()
+    {
+        // ルーム名チェック
+        //Text text = GameObject.Find("InputRoomName").gameObject.GetComponent<Text>();
+        //string roomName = text.text;
+        //if (roomName == "")
+        //{
+        //    // ルーム名が入力されていない場合は何もしない
+        //    return;
+        //}
+
+        // 退室
+        await roomModel.LeaveAsync();
+    }
+
+    // ユーザーが退室した時の処理
+    private void OnLeftUser(Guid connectionId)
+    {
+        // いない人は退室できない
+        if (!characterList.ContainsKey(connectionId))
+        {
+            return;
+        }
+
+        Destroy(characterList[connectionId]); // 対象のオブジェクトを削除
+        characterList.Remove(connectionId); // リストから対象のデータを削除
+    }
+    // 自分が退室した時の処理
+    private void OnLeftUserAll()
+    {
+        // 自分以外のオブジェクトを削除する
+        List<Guid> connectionIdList = characterList.Keys.ToList();
+        foreach (Guid connectionId in connectionIdList)
+        {
+            // 一人分の退室処理
+            OnLeftUser(connectionId);
+        }
+    }
+
+
 
     // 勝者と敗者のレートから、増減レートを計算
     /*private float CalcRating(int winnerRate, int loserRate)

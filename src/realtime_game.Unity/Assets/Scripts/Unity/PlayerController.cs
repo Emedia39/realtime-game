@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
         rb = GetComponent<Rigidbody>();
 
-        WeaponsNom = 2;//武器の識別番号
+        WeaponsNom = 0;//武器の識別番号
 
         foreach (var w in weapons) w.SetActive(false);
         // 選択武器だけ表示

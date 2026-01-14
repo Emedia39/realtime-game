@@ -12,12 +12,20 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
     /// </summary>
     public interface IRoomHub : IStreamingHub<IRoomHub, IRoomHubReceiver>
     {
-        Task<Guid> GetConnectionId();
-
         // [サーバーに実装]
         // [クライアントから呼び出す]
 
         // ユーザー入室
         Task<JoinedUser[]> JoinAsync(string roomName, int userId);
+
+        // ユーザー退室
+        Task LeaveAsync();
+
+        // ユーザー退室
+        Task LeaveAsync();
+
+        // 接続ID取得
+        public Task<Guid> GetConnectionId();
     }
+
 }
