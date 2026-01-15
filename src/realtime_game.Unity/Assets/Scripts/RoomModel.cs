@@ -26,6 +26,9 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     // 他ユーザー移動+回転通知
     public Action<Guid, Vector3, Quaternion> OnMoveCharacter { get; set; }//★ 他ユーザー移動通知※Guid,Vector3, Quaternion
 
+    public Action GameStarted;//ゲーム準備完了/開始通知
+    public Action GameEnded;//ゲーム終了通知
+
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
@@ -115,6 +118,22 @@ public class RoomModel : BaseModel, IRoomHubReceiver
         var uRot = new UnityEngine.Quaternion(euler.X, euler.Y, euler.Z, euler.W);
 
         OnMoveCharacter?.Invoke(connectionId, uPos, uRot);//?を使い、安全チェック
+    }
+
+    public void OnGameStart()
+    {
+        Debug.Log("ゲーム開始！");
+        GameStarted?.Invoke();
+    }
+    public void OnGameEnd()
+    {
+        Debug.Log("ゲーム終了！");
+        GameEnded?.Invoke();
+    }
+    // Ready送信
+    public Task ReadyAsync()
+    {
+        return roomHub.ReadyAsync();
     }
 
 }

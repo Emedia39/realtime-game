@@ -24,9 +24,14 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
 
         //ユーザーの位置同期(場所+ベクトルの回転)
         Task MoveAsync(Vector3 pos, Quaternion euler);//(位置,回転)
+        //Task MoveAsync(System.Numerics.Vector3 pos,
+        //          System.Numerics.Quaternion rot);
 
         // 接続ID取得
         public Task<Guid> GetConnectionId();
+
+        //
+        Task ReadyAsync();
     }
 
 }

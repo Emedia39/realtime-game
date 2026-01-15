@@ -24,5 +24,12 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         //ユーザーの位置同期(接続ID,場所+ベクトルの回転)
         void OnMove(Guid connectionId, Vector3 pos, Quaternion euler);//(接続ID,位置,回転)
 
+
+        //ゲーム準備完了/開始通知
+        void OnGameStart();
+
+        //ゲーム終了通知
+        void OnGameEnd();
+
     }
 }

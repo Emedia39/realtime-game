@@ -1,4 +1,4 @@
-using UnityEngine; // Mathf.PowŠÖ”‚ğg—p‚·‚é‚Ì‚É•K—v
+ï»¿using UnityEngine; // Mathf.Powé–¢æ•°ã‚’ä½¿ç”¨ã™ã‚‹ã®ã«å¿…è¦
 
 using realtime_game.Shared.Interfaces.StreamingHubs;
 using realtime_game.Shared.Models.Entities;
@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 
 using UnityEngine.UI;
-using System.Linq;//InputField‚Å“ü—Í‚³‚ê‚½•¶š—ñ‚ğæ“¾
+using System.Linq;//InputFieldã§å…¥åŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’å–å¾—
 
 public class GameDirector : MonoBehaviour
 {
@@ -16,33 +16,36 @@ public class GameDirector : MonoBehaviour
     RoomModel roomModel;
     UserModel userModel;
 
-    int myUserId = 1;//©•ª‚Ìƒ†[ƒU[ID
+    int myUserId = 1;//è‡ªåˆ†ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ID
 
-    [SerializeField] InputField InputRoomName;//InputField‚Å“ü—Í‚³‚ê‚½•¶š—ñ‚ğæ“¾
-    [SerializeField] InputField InputUserId;//InputField‚Å“ü—Í‚³‚ê‚½•¶š—ñ‚ğæ“¾
+    [SerializeField] InputField InputRoomName;//InputFieldã§å…¥åŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’å–å¾—
+    [SerializeField] InputField InputUserId;//InputFieldã§å…¥åŠ›ã•ã‚ŒãŸæ–‡å­—åˆ—ã‚’å–å¾—
 
     async void Start()
     {
         roomModel = GetComponent<RoomModel>();
         userModel = GetComponent<UserModel>();
 
-        //ƒ†[ƒU[‚ª“üº‚µ‚½‚ÉOnJoinedUserƒƒ\ƒbƒh‚ğÀs‚·‚é‚æ‚¤Aƒ‚ƒfƒ‹‚É“o˜^‚µ‚Ä‚¨‚­
+        //ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒå…¥å®¤ã—ãŸæ™‚ã«OnJoinedUserãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè¡Œã™ã‚‹ã‚ˆã†ã€ãƒ¢ãƒ‡ãƒ«ã«ç™»éŒ²ã—ã¦ãŠã
         roomModel.OnJoinedUser += this.OnJoinedUser;
 
-        // ƒ†[ƒU[‚ª‘Şº‚µ‚½‚ÉOnLeftUserƒƒ\ƒbƒh‚ğÀs‚Å‚«‚é‚æ‚¤Aƒ‚ƒfƒ‹‚É“o˜^‚µ‚Ä‚¨‚­
+        // ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒé€€å®¤ã—ãŸæ™‚ã«OnLeftUserãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè¡Œã§ãã‚‹ã‚ˆã†ã€ãƒ¢ãƒ‡ãƒ«ã«ç™»éŒ²ã—ã¦ãŠã
         roomModel.OnLeftUser += this.OnLeftUser;
-        // ƒ†[ƒU[‚ª‘Şº‚µ‚½‚ÉOnLeftUserAllƒƒ\ƒbƒh‚ğÀs‚Å‚«‚é‚æ‚¤Aƒ‚ƒfƒ‹‚É“o˜^‚µ‚Ä‚¨‚­
+        // ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒé€€å®¤ã—ãŸæ™‚ã«OnLeftUserAllãƒ¡ã‚½ãƒƒãƒ‰ã‚’å®Ÿè¡Œã§ãã‚‹ã‚ˆã†ã€ãƒ¢ãƒ‡ãƒ«ã«ç™»éŒ²ã—ã¦ãŠã
         roomModel.OnLeftUserAll += this.OnLeftUserAll;
 
-        //Ú‘±
+        //æ¥ç¶š
         await roomModel.ConnectAsync();
 
         roomModel.OnMoveCharacter += OnMoveCharacter;
 
-        // ãÒ‚ªŸ—˜‚µ‚½ê‡‚Ì‘Œ¸ƒŒ[ƒg
-        //Debug.Log($"ãÒ‚ÌŸ—˜{CalcRating(1200, 1600)}");
-        // ‹­Ò‚ªŸ—˜‚µ‚½ê‡‚Ì‘Œ¸ƒŒ[ƒg
-        //Debug.Log($"‹­Ò‚ÌŸ—˜{CalcRating(1600, 1200)}");
+        roomModel.GameStarted += StartGame;
+        roomModel.GameEnded += EndGame;
+
+        // å¼±è€…ãŒå‹åˆ©ã—ãŸå ´åˆã®å¢—æ¸›ãƒ¬ãƒ¼ãƒˆ
+        //Debug.Log($"å¼±è€…ã®å‹åˆ©{CalcRating(1200, 1600)}");
+        // å¼·è€…ãŒå‹åˆ©ã—ãŸå ´åˆã®å¢—æ¸›ãƒ¬ãƒ¼ãƒˆ
+        //Debug.Log($"å¼·è€…ã®å‹åˆ©{CalcRating(1600, 1200)}");
 
     }
 
@@ -55,129 +58,147 @@ public class GameDirector : MonoBehaviour
     {
         string roomName = InputRoomName.text;
 
-        if (!int.TryParse(InputUserId.text, out int userId))//int‚É•ÏŠ·
+        if (!int.TryParse(InputUserId.text, out int userId))//intã«å¤‰æ›
         {
             return;
         }
 
         myUserId = userId;
 
-        if (roomName == "sampleRoom")//InputRoomName“à‚ÌƒeƒLƒXƒg‚ª–¢“ü—Í‚Ü‚½‚ÍsampleRoom‚Ì‚Æ‚«
+        if (roomName == "sampleRoom")//InputRoomNameå†…ã®ãƒ†ã‚­ã‚¹ãƒˆãŒæœªå…¥åŠ›ã¾ãŸã¯sampleRoomã®ã¨ã
         {
-            if (userId >= 1 && userId <= 4)//InputUserId“à‚ÌƒeƒLƒXƒg‚ª1`3‚Ì
+            if (userId >= 1 && userId <= 4)//InputUserIdå†…ã®ãƒ†ã‚­ã‚¹ãƒˆãŒ1ï½3ã®æ™‚
             {
-                //“üº
+                //å…¥å®¤
                 await roomModel.JoinAsync(roomName, userId);
-                Debug.Log("CF¬Œ÷");
+                Debug.Log("Cï¼šæˆåŠŸ");
             }
             else
             {
-                Debug.Log("BFÉ‚µ‚¢");
+                Debug.Log("Bï¼šæƒœã—ã„");
             }
         }
         else
         {
-            Debug.Log("AF¸”s");
+            Debug.Log("Aï¼šå¤±æ•—");
         }
 
     }
 
-    // ƒ†[ƒU[‚ª“üº‚µ‚½‚Ìˆ—
+    // ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒå…¥å®¤ã—ãŸæ™‚ã®å‡¦ç†
     private void OnJoinedUser(JoinedUser user)
     {
-        // ‚·‚Å‚É•\¦Ï‚İ‚Ìƒ†[ƒU[‚Í’Ç‰Á‚µ‚È‚¢
+        // ã™ã§ã«è¡¨ç¤ºæ¸ˆã¿ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã¯è¿½åŠ ã—ãªã„
         if (characterList.ContainsKey(user.ConnectionId))
         {
             return;
         }
 
-        // ©•ª‚Í’Ç‰Á‚µ‚È‚¢
+        // è‡ªåˆ†ã¯è¿½åŠ ã—ãªã„
         if (user.UserData.Id == myUserId)
         {
             return;
         }
 
-        GameObject characterObject = Instantiate(characterPrefab);  //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
-        characterObject.transform.position = new Vector3(0, 0, 0); // ”z’uˆÊ’uİ’è
-        characterList[user.ConnectionId] = characterObject;  //ƒtƒB[ƒ‹ƒh‚Å•Û
+        GameObject characterObject = Instantiate(characterPrefab);  //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
+        characterObject.transform.position = new Vector3(0, 0, 0); // é…ç½®ä½ç½®è¨­å®š
+        characterList[user.ConnectionId] = characterObject;  //ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã§ä¿æŒ
     }
 
     public async void LeaveRoom()
     {
-        // ƒ‹[ƒ€–¼ƒ`ƒFƒbƒN
+        // ãƒ«ãƒ¼ãƒ åãƒã‚§ãƒƒã‚¯
         //Text text = GameObject.Find("InputRoomName").gameObject.GetComponent<Text>();
         //string roomName = text.text;
         //if (roomName == "")
         //{
-        //    // ƒ‹[ƒ€–¼‚ª“ü—Í‚³‚ê‚Ä‚¢‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
+        //    // ãƒ«ãƒ¼ãƒ åãŒå…¥åŠ›ã•ã‚Œã¦ã„ãªã„å ´åˆã¯ä½•ã‚‚ã—ãªã„
         //    return;
         //}
 
-        // ‘Şº
+        // é€€å®¤
         await roomModel.LeaveAsync();
     }
 
-    // ƒ†[ƒU[‚ª‘Şº‚µ‚½‚Ìˆ—
+    // ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒé€€å®¤ã—ãŸæ™‚ã®å‡¦ç†
     private void OnLeftUser(Guid connectionId)
     {
-        // ‚¢‚È‚¢l‚Í‘Şº‚Å‚«‚È‚¢
+        // ã„ãªã„äººã¯é€€å®¤ã§ããªã„
         if (!characterList.ContainsKey(connectionId))
         {
             return;
         }
 
-        Destroy(characterList[connectionId]); // ‘ÎÛ‚ÌƒIƒuƒWƒFƒNƒg‚ğíœ
-        characterList.Remove(connectionId); // ƒŠƒXƒg‚©‚ç‘ÎÛ‚Ìƒf[ƒ^‚ğíœ
+        Destroy(characterList[connectionId]); // å¯¾è±¡ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤
+        characterList.Remove(connectionId); // ãƒªã‚¹ãƒˆã‹ã‚‰å¯¾è±¡ã®ãƒ‡ãƒ¼ã‚¿ã‚’å‰Šé™¤
     }
-    // ©•ª‚ª‘Şº‚µ‚½‚Ìˆ—
+    // è‡ªåˆ†ãŒé€€å®¤ã—ãŸæ™‚ã®å‡¦ç†
     private void OnLeftUserAll()
     {
-        // ©•ªˆÈŠO‚ÌƒIƒuƒWƒFƒNƒg‚ğíœ‚·‚é
+        // è‡ªåˆ†ä»¥å¤–ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’å‰Šé™¤ã™ã‚‹
         List<Guid> connectionIdList = characterList.Keys.ToList();
         foreach (Guid connectionId in connectionIdList)
         {
-            // ˆêl•ª‚Ì‘Şºˆ—
+            // ä¸€äººåˆ†ã®é€€å®¤å‡¦ç†
             OnLeftUser(connectionId);
         }
     }
 
-    // ©•ªˆÈŠO‚Ìƒ†[ƒU[‚ÌˆÚ“®‚ğ”½‰f
-    private void OnMoveUser(Guid connectionId, Vector3 pos, Quaternion quaternion)
+    // è‡ªåˆ†ä»¥å¤–ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®ç§»å‹•ã‚’åæ˜ 
+    /*private void OnMoveUser(Guid connectionId, Vector3 pos, Quaternion quaternion)
     {
-        // ‚¢‚È‚¢l‚ÍˆÚ“®‚Å‚«‚È‚¢
+        // ã„ãªã„äººã¯ç§»å‹•ã§ããªã„
         if (!characterList.ContainsKey(connectionId))
         {
             return;
         }
 
-        // DOTween‚ğg‚¤‚±‚Æ‚Å‚È‚ß‚ç‚©‚É“®‚­I
+        // DOTweenã‚’ä½¿ã†ã“ã¨ã§ãªã‚ã‚‰ã‹ã«å‹•ãï¼
         //characterList[connectionId].transform.DOMove(pos, 0.1f);
         characterList[connectionId].transform.position = pos;
 
-    }
+    }*/
 
+    //è‡ªåˆ†ä»¥å¤–ã®ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®ç§»å‹•ã¨å›è»¢ã‚’åæ˜ 
     void OnMoveCharacter(Guid connectionId, Vector3 pos, Quaternion euler)
     {
-        // ‚¢‚È‚¢l‚ÍˆÚ“®‚Å‚«‚È‚¢
+        // ã„ãªã„äººã¯ç§»å‹•ã§ããªã„
         if (!characterList.ContainsKey(connectionId))
         {
             return;
         }
 
-        //characterList‚©‚ç‘ÎÛ‚ÌGameObject‚ğæ“¾
+        //characterListã‹ã‚‰å¯¾è±¡ã®GameObjectã‚’å–å¾—
 
-        // DOTween‚ğg‚¤‚±‚Æ‚Å‚È‚ß‚ç‚©‚É“®‚­I
+        // DOTweenã‚’ä½¿ã†ã“ã¨ã§ãªã‚ã‚‰ã‹ã«å‹•ãï¼
         //characterList[connectionId].transform.DOMove(pos, 0.1f);
-        characterList[connectionId].transform.position = pos;//ˆÊ’uE‰ñ“]‚ğ”½‰f
-        characterList[connectionId].transform.rotation = euler;//ˆÊ’uE‰ñ“]‚ğ”½‰f
+        characterList[connectionId].transform.position = pos;//ä½ç½®ãƒ»å›è»¢ã‚’åæ˜ 
+        characterList[connectionId].transform.rotation = euler;//ä½ç½®ãƒ»å›è»¢ã‚’åæ˜ 
     }
 
+    //
+    public void ReadyButton()
+    {
+        roomModel.ReadyAsync();
+    }
+    void StartGame()
+    {
+        Debug.Log("â–¶ ãƒ—ãƒ¬ã‚¤é–‹å§‹");
+        // ãƒ»æ“ä½œæœ‰åŠ¹åŒ–
+        // ãƒ»UIéè¡¨ç¤º
+        // ãƒ»ã‚¿ã‚¤ãƒãƒ¼é–‹å§‹
+    }
+    void EndGame()
+    {
+        Debug.Log("â–  ãƒ—ãƒ¬ã‚¤çµ‚äº†");
+        // ãƒ»æ“ä½œç„¡åŠ¹åŒ–
+        // ãƒ»çµæœUIè¡¨ç¤º
+    }
 
-
-    // ŸÒ‚Æ”sÒ‚ÌƒŒ[ƒg‚©‚çA‘Œ¸ƒŒ[ƒg‚ğŒvZ
+    // å‹è€…ã¨æ•—è€…ã®ãƒ¬ãƒ¼ãƒˆã‹ã‚‰ã€å¢—æ¸›ãƒ¬ãƒ¼ãƒˆã‚’è¨ˆç®—
     /*private float CalcRating(int winnerRate, int loserRate)
     {
-        const int K = 32; // ƒŒ[ƒgŒvZ—p‚Ì’è”B‚±‚ê‚ª‘å‚«‚­‚È‚ê‚Î‘Œ¸ƒŒ[ƒg‚à‘å‚«‚­‚È‚é
+        const int K = 32; // ãƒ¬ãƒ¼ãƒˆè¨ˆç®—ç”¨ã®å®šæ•°ã€‚ã“ã‚ŒãŒå¤§ãããªã‚Œã°å¢—æ¸›ãƒ¬ãƒ¼ãƒˆã‚‚å¤§ãããªã‚‹
         return K / Mathf.Pow(10, ((winnerRate - loserRate) / 400f) + 1);
     }*/
 

@@ -103,6 +103,52 @@ namespace Server.StreamingHubs
             return Task.CompletedTask;
         }
 
+        //準備完了
+        public async Task ReadyAsync()
+        {
+            //準備出来たことを自分のRoomUserDataに保存
+            var roomUserData = this.roomContext.RoomUserDataList[this.ConnectionId];
+
+            //roomUserDataにboolやintで準備完了を保存しておく
+            roomUserData.IsReady = true;
+
+            //全員準備できたか判定
+            bool isReady = true;
+            var roomUserDataList = this.roomContext.RoomUserDataList.Values.ToArray();
+            foreach (var targetRoomUserData in roomUserDataList)
+            {
+                //targetRoomUserDataに保存した準備完了状態を確認
+                if (!targetRoomUserData.IsReady)
+                {
+                    isReady = false;
+                    break;
+                }
+
+            }
+
+            //全員準備していたら、全員にゲーム開始を通知
+            if (isReady)
+            {
+                //Broadcast(x => x.OnGameStart());
+                this.roomContext.Group.All.OnGameStart();
+            }
+
+        }
+
+        public async Task EndGameAsync()
+        {
+            // 全員の準備状態をリセット
+            foreach (var user in roomContext.RoomUserDataList.Values)
+            {
+                user.IsReady = false;
+            }
+
+            // クライアントに通知
+            //Broadcast(x => x.OnGameEnd());
+            this.roomContext.Group.All.OnGameEnd();
+
+        }
+
     }
 
 }

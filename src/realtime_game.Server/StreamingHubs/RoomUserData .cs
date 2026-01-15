@@ -10,6 +10,9 @@ namespace realtime_game.Server.StreamingHubs
         public JoinedUser JoinedUser;
         public Vector3 pos;//移動(場所)
         public Quaternion euler;//回転(ベクトルの回転)
+
+        public bool IsReady { get; set; } = false;//準備完了フラグ
+
     }
 
 }
