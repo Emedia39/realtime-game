@@ -37,6 +37,8 @@ public class GameDirector : MonoBehaviour
         //接続
         await roomModel.ConnectAsync();
 
+        roomModel.OnMoveCharacter += OnMoveCharacter;
+
         // 弱者が勝利した場合の増減レート
         //Debug.Log($"弱者の勝利{CalcRating(1200, 1600)}");
         // 強者が勝利した場合の増減レート
@@ -151,6 +153,23 @@ public class GameDirector : MonoBehaviour
         // DOTweenを使うことでなめらかに動く！
         //characterList[connectionId].transform.DOMove(pos, 0.1f);
         characterList[connectionId].transform.position = pos;
+
+    }
+
+    void OnMoveCharacter(Guid connectionId, Vector3 pos, Quaternion euler)
+    {
+        // いない人は移動できない
+        if (!characterList.ContainsKey(connectionId))
+        {
+            return;
+        }
+
+        //characterListから対象のGameObjectを取得
+
+        // DOTweenを使うことでなめらかに動く！
+        //characterList[connectionId].transform.DOMove(pos, 0.1f);
+        characterList[connectionId].transform.position = pos;//位置・回転を反映
+        characterList[connectionId].transform.rotation = euler;//位置・回転を反映
     }
 
 

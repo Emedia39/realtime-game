@@ -1979,7 +1979,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "End Unity(\u4EEE)"
+  m_Text: "Close Unity(\u4EEE)"
 --- !u!222 &854031335
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -59,7 +59,9 @@ namespace Server.StreamingHubs
         // 切断時の処理
         protected override ValueTask OnDisconnected()
         {
-            return default;
+            LeaveAsync();
+            return CompletedTask;
+            //return default;
         }
 
         // 接続ID取得
@@ -86,14 +88,17 @@ namespace Server.StreamingHubs
                 return Task.CompletedTask;
         }
 
-        // 移動
-        public Task MoveAsync(Vector3 pos)
+        // 移動+回転
+        public Task MoveAsync(Vector3 pos, Quaternion euler)
         {
             // 位置情報を記録
             this.roomContext.RoomUserDataList[this.ConnectionId].pos = pos;
 
+            //回転情報を記録
+            this.roomContext.RoomUserDataList[this.ConnectionId].euler = euler;
+
             // 移動情報を自分以外の全メンバーに通知
-            this.roomContext.Group.Except([this.ConnectionId]).OnMove(this.ConnectionId, pos);
+            this.roomContext.Group.Except([this.ConnectionId]).OnMove(this.ConnectionId, pos, euler);
 
             return Task.CompletedTask;
         }
@@ -101,5 +106,3 @@ namespace Server.StreamingHubs
     }
 
 }
-
-

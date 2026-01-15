@@ -8,7 +8,8 @@ namespace realtime_game.Server.StreamingHubs
     public class RoomUserData
     {
         public JoinedUser JoinedUser;
-        public Vector3 pos;
+        public Vector3 pos;//移動(場所)
+        public Quaternion euler;//回転(ベクトルの回転)
     }
 
 }

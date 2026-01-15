@@ -21,8 +21,8 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         void OnLeave(Guid connectionId);
         //これ取ればIRoomHubReceiverが正常になるけど…
 
-        //ユーザーの位置同期(移動)
-        void OnMove(Guid connectionId, Vector3 pos);
+        //ユーザーの位置同期(接続ID,場所+ベクトルの回転)
+        void OnMove(Guid connectionId, Vector3 pos, Quaternion euler);//(接続ID,位置,回転)
 
     }
 }

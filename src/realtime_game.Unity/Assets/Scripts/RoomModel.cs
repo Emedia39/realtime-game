@@ -5,6 +5,9 @@ using realtime_game.Shared.Interfaces.StreamingHubs;
 using System;
 using UnityEngine;
 
+//using System.Numerics;
+using System.Threading.Tasks;//Taskのため
+
 public class RoomModel : BaseModel, IRoomHubReceiver
 {
     private GrpcChannelx channel;
@@ -20,8 +23,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     // ユーザー切断通知
     public Action OnLeftUserAll { get; set; }
 
-    // 他ユーザー移動通知
-    public Action<Guid, Vector3> OnMoveUser { get; set; }// ★
+    // 他ユーザー移動+回転通知
+    public Action<Guid, Vector3, Quaternion> OnMoveCharacter { get; set; }//★ 他ユーザー移動通知※Guid,Vector3, Quaternion
 
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -91,17 +94,27 @@ public class RoomModel : BaseModel, IRoomHubReceiver
 
     }
 
-    // ★他ユーザー移動情報
-    public void OnMove(Guid connectionId, System.Numerics.Vector3 pos)
+    //位置・回転を送信
+    public Task MoveAsync(Vector3 pos, Quaternion euler)
     {
-        // 自分自身は無視
-        if (connectionId == this.ConnectionId)
-            return;
+        // Unity → Numerics へ変換
+        var nPos = new System.Numerics.Vector3(pos.x, pos.y, pos.z);
+        var nRot = new System.Numerics.Quaternion(euler.x, euler.y, euler.z, euler.w);
 
-        // Numerics → Unity へ変換
-        Vector3 unityPos = new Vector3(pos.X, pos.Y, pos.Z);
+        //「サーバーの関数呼び出し」
+        return roomHub.MoveAsync(nPos, nRot);
+    }
 
-        OnMoveUser?.Invoke(connectionId, unityPos);
+    // 位置・回転を受信
+    public void OnMove(Guid connectionId,
+                       System.Numerics.Vector3 pos,
+                       System.Numerics.Quaternion euler)
+    {
+        // Numerics → Unity に変換
+        var uPos = new UnityEngine.Vector3(pos.X, pos.Y, pos.Z);
+        var uRot = new UnityEngine.Quaternion(euler.X, euler.Y, euler.Z, euler.W);
+
+        OnMoveCharacter?.Invoke(connectionId, uPos, uRot);//?を使い、安全チェック
     }
 
 }
