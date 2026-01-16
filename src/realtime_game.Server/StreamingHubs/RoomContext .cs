@@ -5,9 +5,9 @@ namespace realtime_game.Server.StreamingHubs
 {
     public enum GameState//ゲームの状況
     {
-        Waiting,//
-        Playing,
-        Result
+        Waiting,//ロビー
+        Playing,//試合中
+        Result//終了
     }
 
     public class RoomContext : IDisposable
@@ -19,6 +19,9 @@ namespace realtime_game.Server.StreamingHubs
             new Dictionary<Guid, RoomUserData>(); // ユーザデータ一覧
 
         public GameState GameState = GameState.Waiting;//ゲームの状況
+        public GameState CurrentGameState = GameState.Waiting;//現在のゲームの状態
+
+
 
         //その他、ルームのデータとして保存したいものをフィールドに追加していく
 

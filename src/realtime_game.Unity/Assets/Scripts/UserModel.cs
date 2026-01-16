@@ -27,6 +27,7 @@ public class UserModel : BaseModel
             return false;
             
         }
+
     }
 
     internal async Task<User> GetUser(int myUserId)//===ÅIÅ¶(GameDirectorÇÊÇË)===
@@ -46,6 +47,7 @@ public class UserModel : BaseModel
             UnityEngine.Debug.LogError($"GetUser failed: {e.Status.Detail}");
             throw;
         }
+
     }
     
 }

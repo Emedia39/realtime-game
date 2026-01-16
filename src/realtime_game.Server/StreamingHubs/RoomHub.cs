@@ -16,6 +16,22 @@ namespace Server.StreamingHubs
         // ルームに接続
         public async Task<JoinedUser[]> JoinAsync(string roomName, int userId)
         {
+            //試合中なら参加拒否
+            var context = roomContextRepos.GetContext(roomName);
+
+            if (context != null &&
+                context.CurrentGameState == GameState.Playing)
+            {
+                throw new InvalidOperationException("Game already started.");
+            }
+            /*if (roomContext != null &&
+                roomContext.CurrentGameState == GameState.Playing)
+            {
+                throw new InvalidOperationException("Game already started.");
+            }*/
+
+            //※ここからJoin処理
+
             // 同時に生成しないように排他制御
             lock (roomContextRepos)
             {
@@ -31,8 +47,8 @@ namespace Server.StreamingHubs
             this.roomContext.Group.Add(this.ConnectionId, Client);
 
             // DBからユーザー情報取得
-            GameDbContext context = new GameDbContext();
-            User user = context.Users.Where(user => user.Id == userId).First();
+            GameDbContext Dbcontext = new GameDbContext();
+            User user = Dbcontext.Users.Where(user => user.Id == userId).First();
 
             // 入室済みユーザーのデータを作成
             var joinedUser = new JoinedUser();
@@ -74,14 +90,18 @@ namespace Server.StreamingHubs
         public Task LeaveAsync()
             {
             //　退室したことを全メンバーに通知
+            /*if (roomContext == null)
+            return Task.CompletedTask;*/
             this.roomContext.Group.All.OnLeave(this.ConnectionId);//！OnLeave？
 
             //　ルーム内のメンバーから自分を削除
             this.roomContext.Group.Remove(this.ConnectionId);
 
-                //　ルームデータから退室したユーザーを削除
-                this.roomContext.RoomUserDataList.Remove(this.ConnectionId);
-                if (this.roomContext.RoomUserDataList.Count == 0)//ルーム内にユーザーが一人もいないなら
+            //　ルームデータから退室したユーザーを削除
+            this.roomContext.RoomUserDataList.Remove(this.ConnectionId);
+            //roomContextRepos.RemoveContext(roomContext.Name);
+
+            if (this.roomContext.RoomUserDataList.Count == 0)//ルーム内にユーザーが一人もいないなら
             {
                     roomContextRepos.RemoveContext("sampleRoom");//[ルーム(名)]を削除
                 }
@@ -141,6 +161,7 @@ namespace Server.StreamingHubs
         public async Task StartGameAsync()
         {
             roomContext.GameState = GameState.Playing;
+            roomContext.CurrentGameState = GameState.Playing;//全員Ready→試合開始
 
             // ★ ゲーム開始時刻を確定
             roomContext.GameStartTime = DateTime.UtcNow;
@@ -195,6 +216,8 @@ namespace Server.StreamingHubs
                 return;
 
             roomContext.GameState = GameState.Result;
+            roomContext.CurrentGameState = GameState.Result;
+            //またはroomContext.Reset(); // ユーザーも状態も全初期化
 
             roomContext.Group.All.OnGameEnd();
 

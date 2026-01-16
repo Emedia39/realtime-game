@@ -24,6 +24,7 @@ public class GameDirector : MonoBehaviour
     [SerializeField] Text timeText;//時間
     [SerializeField] Text countdownText;//時間
 
+    [SerializeField] Text messageText;//試合中に合流しようとした時用
 
     async void Start()
     {
@@ -47,6 +48,17 @@ public class GameDirector : MonoBehaviour
         roomModel.GameEnded += EndGame;
 
         roomModel.OnTimeUpdated += UpdateTimeUI;//時間
+
+        try
+        {
+            await roomModel.JoinAsync("sampleRoom", 1);
+        }
+        catch (Exception)
+        {
+            messageText.text = "試合中のため参加できません";
+        }
+
+
 
         // 弱者が勝利した場合の増減レート
         //Debug.Log($"弱者の勝利{CalcRating(1200, 1600)}");
