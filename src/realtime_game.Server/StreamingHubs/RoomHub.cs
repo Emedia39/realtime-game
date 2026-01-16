@@ -135,17 +135,65 @@ namespace Server.StreamingHubs
 
         }
 
+        public async Task StartGameAsync()
+        {
+            roomContext.GameState = GameState.Playing;
+
+            // ★ ゲーム開始時刻を確定
+            roomContext.GameStartTime = DateTime.UtcNow;
+
+            // ゲーム開始通知
+            roomContext.Group.All.OnGameStart();
+
+            // タイマー開始
+            _ = GameTimerLoop();
+        }
+
+        private async Task GameTimerLoop()
+        {
+            while (roomContext.GameState == GameState.Playing)
+            {
+                // 経過時間
+                var elapsed = DateTime.UtcNow - roomContext.GameStartTime;
+
+                // 残り時間（秒）
+                int remaining =
+                    roomContext.GameTimeSeconds - (int)elapsed.TotalSeconds;
+
+                if (remaining <= 0)
+                {
+                    // 時間切れ
+                    roomContext.Group.All.OnTimeUpdate(0);
+                    await EndGameAsync();
+                    return;
+                }
+
+                // 全員に残り時間を通知
+                roomContext.Group.All.OnTimeUpdate(remaining);
+
+                // ★ 1秒待つ
+                await Task.Delay(1000);
+            }
+        }
+
         public async Task EndGameAsync()
         {
             // 全員の準備状態をリセット
-            foreach (var user in roomContext.RoomUserDataList.Values)
+            /*foreach (var user in roomContext.RoomUserDataList.Values)
             {
                 user.IsReady = false;
             }
 
             // クライアントに通知
             //Broadcast(x => x.OnGameEnd());
-            this.roomContext.Group.All.OnGameEnd();
+            this.roomContext.Group.All.OnGameEnd();*/
+
+            if (roomContext.GameState != GameState.Playing)
+                return;
+
+            roomContext.GameState = GameState.Result;
+
+            roomContext.Group.All.OnGameEnd();
 
         }
 

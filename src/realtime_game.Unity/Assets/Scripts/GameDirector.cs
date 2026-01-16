@@ -21,6 +21,9 @@ public class GameDirector : MonoBehaviour
     [SerializeField] InputField InputRoomName;//InputFieldで入力された文字列を取得
     [SerializeField] InputField InputUserId;//InputFieldで入力された文字列を取得
 
+    [SerializeField] Text timeText;//時間
+
+
     async void Start()
     {
         roomModel = GetComponent<RoomModel>();
@@ -41,6 +44,8 @@ public class GameDirector : MonoBehaviour
 
         roomModel.GameStarted += StartGame;
         roomModel.GameEnded += EndGame;
+
+        roomModel.OnTimeUpdated += UpdateTimeUI;//時間
 
         // 弱者が勝利した場合の増減レート
         //Debug.Log($"弱者の勝利{CalcRating(1200, 1600)}");
@@ -194,6 +199,16 @@ public class GameDirector : MonoBehaviour
         // ・操作無効化
         // ・結果UI表示
     }
+
+    //時間
+    void UpdateTimeUI(int seconds)
+    {
+        int min = seconds / 60;
+        int sec = seconds % 60;
+        timeText.text = $"{min:00}:{sec:00}";
+    }
+
+
 
     // 勝者と敗者のレートから、増減レートを計算
     /*private float CalcRating(int winnerRate, int loserRate)

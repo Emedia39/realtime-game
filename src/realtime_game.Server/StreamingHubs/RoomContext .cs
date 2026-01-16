@@ -3,6 +3,13 @@ using realtime_game.Shared.Interfaces.StreamingHubs;
 
 namespace realtime_game.Server.StreamingHubs
 {
+    public enum GameState//ゲームの状況
+    {
+        Waiting,//
+        Playing,
+        Result
+    }
+
     public class RoomContext : IDisposable
     {
         public Guid Id { get; } // ルームID
@@ -10,6 +17,8 @@ namespace realtime_game.Server.StreamingHubs
         public IMulticastSyncGroup<Guid, IRoomHubReceiver> Group { get; } // グループ
         public Dictionary<Guid, RoomUserData> RoomUserDataList { get; } =
             new Dictionary<Guid, RoomUserData>(); // ユーザデータ一覧
+
+        public GameState GameState = GameState.Waiting;//ゲームの状況
 
         //その他、ルームのデータとして保存したいものをフィールドに追加していく
 
@@ -26,5 +35,12 @@ namespace realtime_game.Server.StreamingHubs
         {
             Group.Dispose();
         }
+
+        // ★ ゲーム制限時間（秒）
+        public int GameTimeSeconds = 180;
+
+        // ★ ゲーム開始時刻（UTC）
+        public DateTime GameStartTime;
+
     }
 }

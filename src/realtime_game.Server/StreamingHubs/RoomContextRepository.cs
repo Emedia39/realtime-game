@@ -21,7 +21,6 @@ namespace realtime_game.Server.StreamingHubs
             return context;
         }
 
-
         // ルームコンテキストの取得
         public RoomContext GetContext(string roomName)
         {
@@ -40,5 +39,6 @@ namespace realtime_game.Server.StreamingHubs
                 RoomContext?.Dispose();
             }
         }
+
     }
 }

@@ -31,5 +31,8 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         //ゲーム終了通知
         void OnGameEnd();
 
+        // ★ 残り時間通知(秒)
+        void OnTimeUpdate(int remainingSeconds);
+
     }
 }

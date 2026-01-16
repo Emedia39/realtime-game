@@ -29,6 +29,8 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action GameStarted;//ゲーム準備完了/開始通知
     public Action GameEnded;//ゲーム終了通知
 
+    public Action<int> OnTimeUpdated;//時間
+
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
     {
@@ -134,6 +136,12 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Task ReadyAsync()
     {
         return roomHub.ReadyAsync();
+    }
+
+    //時間
+    public void OnTimeUpdate(int remainingSeconds)
+    {
+        OnTimeUpdated?.Invoke(remainingSeconds);
     }
 
 }
