@@ -130,7 +130,10 @@ namespace Server.StreamingHubs
             if (isReady)
             {
                 //Broadcast(x => x.OnGameStart());
-                this.roomContext.Group.All.OnGameStart();
+                //this.roomContext.Group.All.OnGameStart();//即開始
+
+                _ = StartCountdownAsync();//開始カウントダウン
+
             }
 
         }
@@ -195,6 +198,24 @@ namespace Server.StreamingHubs
 
             roomContext.Group.All.OnGameEnd();
 
+        }
+
+        //開始カウントダウン
+        private async Task StartCountdownAsync()
+        {
+            // 二重開始防止
+            if (roomContext.GameState != GameState.Waiting)
+                return;
+
+            roomContext.GameState = GameState.Waiting; // まだプレイ開始ではない
+
+            for (int i = 3; i > 0; i--)
+            {
+                roomContext.Group.All.OnCountdown(i);
+                await Task.Delay(1000);
+            }
+
+            await StartGameAsync();
         }
 
     }

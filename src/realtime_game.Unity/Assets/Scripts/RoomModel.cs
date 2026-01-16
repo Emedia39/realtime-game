@@ -30,6 +30,7 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public Action GameEnded;//ゲーム終了通知
 
     public Action<int> OnTimeUpdated;//時間
+    public Action<int> CountdownUpdated;//開始カウントダウン
 
     //　MagicOnion接続処理
     public async UniTask ConnectAsync()
@@ -142,6 +143,13 @@ public class RoomModel : BaseModel, IRoomHubReceiver
     public void OnTimeUpdate(int remainingSeconds)
     {
         OnTimeUpdated?.Invoke(remainingSeconds);
+    }
+
+    // カウントダウン通知（IRoomHubReceiver 実装）
+    public void OnCountdown(int seconds)
+    {
+        // Unity側へ中継するだけ
+        CountdownUpdated?.Invoke(seconds);
     }
 
 }

@@ -34,5 +34,8 @@ namespace realtime_game.Shared.Interfaces.StreamingHubs
         // ★ 残り時間通知(秒)
         void OnTimeUpdate(int remainingSeconds);
 
+        //開始カウントダウン通知
+        void OnCountdown(int seconds);
+
     }
 }

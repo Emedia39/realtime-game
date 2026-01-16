@@ -22,6 +22,7 @@ public class GameDirector : MonoBehaviour
     [SerializeField] InputField InputUserId;//InputFieldで入力された文字列を取得
 
     [SerializeField] Text timeText;//時間
+    [SerializeField] Text countdownText;//時間
 
 
     async void Start()
@@ -208,7 +209,11 @@ public class GameDirector : MonoBehaviour
         timeText.text = $"{min:00}:{sec:00}";
     }
 
-
+    //開始カウントダウン
+    public void OnCountdown(int seconds)
+    {
+        countdownText.text = seconds.ToString();
+    }
 
     // 勝者と敗者のレートから、増減レートを計算
     /*private float CalcRating(int winnerRate, int loserRate)
