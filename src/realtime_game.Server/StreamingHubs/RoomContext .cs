@@ -6,6 +6,7 @@ namespace realtime_game.Server.StreamingHubs
     public enum GameState//ゲームの状況
     {
         Waiting,//ロビー
+        Countdown,//開始カウントダウン
         Playing,//試合中
         Result//終了
     }

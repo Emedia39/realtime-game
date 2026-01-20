@@ -32,7 +32,7 @@ namespace Server.StreamingHubs
 
             //※ここからJoin処理
 
-            // 同時に生成しないように排他制御
+            //！同時に生成しないよう「排他制御」
             lock (roomContextRepos)
             {
                 // 指定の名前のルームがあるかどうかを確認
@@ -126,79 +126,92 @@ namespace Server.StreamingHubs
         //準備完了
         public async Task ReadyAsync()
         {
-            //準備出来たことを自分のRoomUserDataに保存
-            var roomUserData = this.roomContext.RoomUserDataList[this.ConnectionId];
-
-            //roomUserDataにboolやintで準備完了を保存しておく
-            roomUserData.IsReady = true;
-
-            //全員準備できたか判定
-            bool isReady = true;
-            var roomUserDataList = this.roomContext.RoomUserDataList.Values.ToArray();
-            foreach (var targetRoomUserData in roomUserDataList)
+            //！同時に生成しないよう「排他制御」
+            lock (this.roomContext)
             {
-                //targetRoomUserDataに保存した準備完了状態を確認
-                if (!targetRoomUserData.IsReady)
+
+                //準備出来たことを自分のRoomUserDataに保存
+                var roomUserData = this.roomContext.RoomUserDataList[this.ConnectionId];
+
+                //roomUserDataにboolやintで準備完了を保存しておく
+                roomUserData.IsReady = true;
+
+                //全員準備できたか判定
+                bool isReady = true;
+                var roomUserDataList = this.roomContext.RoomUserDataList.Values.ToArray();
+                foreach (var targetRoomUserData in roomUserDataList)
                 {
-                    isReady = false;
-                    break;
+                    //targetRoomUserDataに保存した準備完了状態を確認
+                    if (!targetRoomUserData.IsReady)
+                    {
+                        isReady = false;
+                        break;
+                    }
+
                 }
 
-            }
+                //全員準備していたら、全員にゲーム開始を通知
+                if (isReady)
+                {
+                    //Broadcast(x => x.OnGameStart());
+                    //this.roomContext.Group.All.OnGameStart();//即開始
 
-            //全員準備していたら、全員にゲーム開始を通知
-            if (isReady)
-            {
-                //Broadcast(x => x.OnGameStart());
-                //this.roomContext.Group.All.OnGameStart();//即開始
+                    _ = StartCountdownAsync();//開始カウントダウン
 
-                _ = StartCountdownAsync();//開始カウントダウン
-
+                }
             }
 
         }
 
         public async Task StartGameAsync()
         {
-            roomContext.GameState = GameState.Playing;
-            roomContext.CurrentGameState = GameState.Playing;//全員Ready→試合開始
+            //！同時に生成しないよう「排他制御」
+            lock (this.roomContext)
+            {
 
-            // ★ ゲーム開始時刻を確定
-            roomContext.GameStartTime = DateTime.UtcNow;
+                roomContext.GameState = GameState.Playing;
+                roomContext.CurrentGameState = GameState.Playing;//全員Ready→試合開始
 
-            // ゲーム開始通知
-            roomContext.Group.All.OnGameStart();
+                // ★ ゲーム開始時刻を確定
+                roomContext.GameStartTime = DateTime.UtcNow;
 
-            // タイマー開始
-            _ = GameTimerLoop();
+                // ゲーム開始通知
+                roomContext.Group.All.OnGameStart();
+
+                // タイマー開始
+                _ = GameTimerLoop();
+            }
+
         }
 
         private async Task GameTimerLoop()
         {
-            while (roomContext.GameState == GameState.Playing)
-            {
-                // 経過時間
-                var elapsed = DateTime.UtcNow - roomContext.GameStartTime;
-
-                // 残り時間（秒）
-                int remaining =
-                    roomContext.GameTimeSeconds - (int)elapsed.TotalSeconds;
-
-                if (remaining <= 0)
+ 
+                while (roomContext.GameState == GameState.Playing)
                 {
-                    // 時間切れ
-                    roomContext.Group.All.OnTimeUpdate(0);
-                    await EndGameAsync();
-                    return;
+                    // 経過時間
+                    var elapsed = DateTime.UtcNow - roomContext.GameStartTime;
+
+                    // 残り時間（秒）
+                    int remaining =
+                        roomContext.GameTimeSeconds - (int)elapsed.TotalSeconds;
+
+                    if (remaining <= 0)
+                    {
+                        // 時間切れ
+                        roomContext.Group.All.OnTimeUpdate(0);
+                        await EndGameAsync();
+                        return;
+                    }
+
+                    // 全員に残り時間を通知
+                    roomContext.Group.All.OnTimeUpdate(remaining);
+
+                    // ★ 1秒待つ
+                    await Task.Delay(1000);
                 }
-
-                // 全員に残り時間を通知
-                roomContext.Group.All.OnTimeUpdate(remaining);
-
-                // ★ 1秒待つ
-                await Task.Delay(1000);
-            }
         }
+        
 
         public async Task EndGameAsync()
         {
@@ -212,33 +225,40 @@ namespace Server.StreamingHubs
             //Broadcast(x => x.OnGameEnd());
             this.roomContext.Group.All.OnGameEnd();*/
 
-            if (roomContext.GameState != GameState.Playing)
-                return;
+            //！同時に生成しないよう「排他制御」
+            lock (this.roomContext)
+            {
 
-            roomContext.GameState = GameState.Result;
-            roomContext.CurrentGameState = GameState.Result;
-            //またはroomContext.Reset(); // ユーザーも状態も全初期化
+                //ゲームが終わっていないのに終了しない
+                if (roomContext.GameState != GameState.Playing)
+                    return;
 
-            roomContext.Group.All.OnGameEnd();
+                roomContext.GameState = GameState.Result;
+                roomContext.CurrentGameState = GameState.Result;
+                //またはroomContext.Reset(); // ユーザーも状態も全初期化
 
+                roomContext.Group.All.OnGameEnd();
+            }
         }
 
         //開始カウントダウン
         private async Task StartCountdownAsync()
         {
-            // 二重開始防止
-            if (roomContext.GameState != GameState.Waiting)
-                return;
 
-            roomContext.GameState = GameState.Waiting; // まだプレイ開始ではない
+                // 二重開始防止？
+                if (roomContext.GameState != GameState.Waiting)
+                    return;
 
-            for (int i = 3; i > 0; i--)
-            {
-                roomContext.Group.All.OnCountdown(i);
-                await Task.Delay(1000);
-            }
+                roomContext.GameState = GameState.Countdown;
+                //roomContext.GameState = GameState.Waiting; // まだプレイ開始ではない
 
-            await StartGameAsync();
+                for (int i = 3; i > 0; i--)
+                {
+                    roomContext.Group.All.OnCountdown(i);
+                    await Task.Delay(1000);
+                }
+
+                await StartGameAsync();
         }
 
     }
